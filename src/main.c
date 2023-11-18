@@ -1,9 +1,11 @@
 #include <stdbool.h>
 #include <stddef.h>
+#include <string.h>
 #include <stdio.h>
+
 #include "raylib.h"
 
-#include "wm.h"
+#include "ui.h"
 
 #define DESIGN_WIDTH 800
 #define DESIGN_HEIGHT 600
@@ -13,38 +15,54 @@ int main()
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(DESIGN_WIDTH, DESIGN_HEIGHT, "Warmagic");
 
-    ScreenTransform transform = GetScreenTransform(
+    SetTargetFPS(100);
+
+    ScreenTransform t = GetScreenTransform(
         GetScreenWidth(),
         GetScreenHeight(),
         DESIGN_WIDTH,
         DESIGN_HEIGHT);
 
-    UIRect background = { 0, 0, 800, 600 };
+    UIElement* background = CreateSolidRect(
+        (UIRect) { 0, 0, DESIGN_WIDTH, DESIGN_HEIGHT },
+        WARMAGIC_STYLE_NOBORDER);
 
-    Label titleLabel = CreateLabel(
-        (UIRect) { 10, 10, 260, 50 },
-        BLACK,
-        3,
-        DARKPURPLE,
-        (UIText) { "Warmagic", 35, PURPLE });
+    UIElement* titleLabel = CreateLabel(
+        (UIRect) { 0, 0, 260, 60 },
+        "Warriorden",
+        35,
+        (UIAlign) { H_CENTER, V_CENTER, 0, 0, 0, 0 },
+        WARMAGIC_STYLE);
+
+    UIElement* tBackground = CreateEmptyUIElement();
+    ScreenTransformUIElement(background, t, tBackground);
+    UIElement* tTitleLabel = CreateEmptyUIElement();
+    ScreenTransformUIElement(titleLabel, t, tTitleLabel);
 
     while (!WindowShouldClose())
     {
         if (IsWindowResized())
         {
-            transform = GetScreenTransform(
+            t = GetScreenTransform(
                 GetScreenWidth(),
                 GetScreenHeight(),
                 DESIGN_WIDTH,
                 DESIGN_HEIGHT);
+            ScreenTransformUIElement(background, t, tBackground);
+            ScreenTransformUIElement(titleLabel, t, tTitleLabel);
         }
 
         BeginDrawing();
         ClearBackground(DARKGRAY);
-        DrawUIRectTransform(background, BLACK, transform);
-        DrawLabelTransform(titleLabel, transform);
+        DrawUIElement(tBackground);
+        DrawUIElement(tTitleLabel);
         EndDrawing();
     }
+
+    DeleteUIElement(background);
+    DeleteUIElement(tBackground);
+    DeleteUIElement(titleLabel);
+    DeleteUIElement(tTitleLabel);
 
     CloseWindow();
 }
