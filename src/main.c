@@ -29,7 +29,7 @@ int main()
 
     UIElement* titleLabel = CreateLabel(
         (UIRect) { 0, 0, 260, 60 },
-        "Warriorden",
+        "Warmagic",
         35,
         (UIAlign) { H_CENTER, V_CENTER, 0, 0, 0, 0 },
         WARMAGIC_STYLE);
